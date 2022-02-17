@@ -30,10 +30,10 @@ router.patch('/:name', function (req, res) {
 
   if (!item) throw new NotFoundError("item not found");
 
-  item.price = req.body.price;
-  item.name = req.body.name;
+  item.price = req.body.price || item.price;
+  item.name = req.body.name || item.name;
 
-  return res.json({ update: item })
+  return res.json({ updated: item })
 })
 
 router.delete('/:name', function (req, res) {
