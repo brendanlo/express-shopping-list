@@ -13,7 +13,7 @@ router.get('/', function (req, res) {
 /** accepts JSON body, adds an item, and returns the JSON body */
 router.post('/', function (req, res) {
   db.items.push(req.body);
-  return res.json({ added: req.body });
+  return res.status(201).json({ added: req.body });
 })
 
 /** returns a single item from the params */
