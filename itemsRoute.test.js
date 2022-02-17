@@ -8,20 +8,20 @@ let pickle = { name: "Pickle", price: 1.85 };
 
 beforeEach(function () {
   db.items.push(pickle);
-});
+})
 
 afterEach(function () {
-  db.items = [];
-});
+  db.items.length = 0;
+})
 
-/** */
+/**this test list all the items from db.items */
 describe("GET /items", function () {
   it("Gets a list of shopping list", async function () {
     const resp = await request(app).get(`/items`);
 
     expect(resp.body).toEqual({ items: [pickle] });
   });
-});
+})
 
 /**this test adding item to the db.items array */
 describe("POST /items", function () {
@@ -53,9 +53,6 @@ describe("PATCH /items/:name", function () {
       .patch(`/items/${pickle.name}`).send({
         name: "moldy pickle"
       });
-
-    debugger;
-
     expect(resp.body).toEqual({
       updated: { name: "moldy pickle", price: 1.85 }
     });
@@ -65,3 +62,14 @@ describe("PATCH /items/:name", function () {
     expect(resp.statusCode).toEqual(404);
   });
 });
+
+/**this test if the item has been deleted/remove from db.items */
+describe("DELETE /items/:name", function() {
+  it("Deletes a single a item", async function() {
+    const resp = await request(app)
+      .delete(`/items/${pickle.name}`);
+    expect(resp.body).toEqual({ message: "deleted" });
+    expect(db.items.length).toEqual(0);
+  });
+});
+
