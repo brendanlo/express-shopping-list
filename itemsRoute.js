@@ -23,17 +23,30 @@ router.get('/:name', function (req, res) {
   }))
 });
 
-router.patch('/:name', function(req, res){
-  const updatedItem = db.items.find(function(item){
-    if(item.name === req.params.name){
-      item.price === req.body.price;
-      item.name === req.body.name;
-      return item;
-    }else{
-      throw new NotFoundError;
-    }
-  })
-  return res.json({update: updatedItem})
+router.patch('/:name', function (req, res) {
+  const item = db.items.find(function (item) {
+    return item.name === req.params.name;
+  });
+
+  if (!item) throw new NotFoundError("item not found");
+
+  item.price = req.body.price;
+  item.name = req.body.name;
+
+  return res.json({ update: item })
 })
+
+router.delete('/:name', function (req, res) {
+  const itemLoc = db.items.find(function (item, index) {
+    if (item.name === req.params.name) {
+      return index;
+    }
+  });
+
+  db.items.splice(itemLoc, 1);
+
+  return res.json({ message: "deleted" });
+});
+
 
 module.exports = router;
