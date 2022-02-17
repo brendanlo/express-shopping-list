@@ -1,8 +1,8 @@
 "use strict";
 
 const express = require("express");
-
 const db = require("./fakeDb");
+const { NotFoundError, BadRequestError } = require("./expressError");
 const router = new express.Router();
 
 /** return the list of shopping items from the db */
@@ -18,7 +18,22 @@ router.post('/', function (req, res) {
 
 /** returns a single item from the params */
 router.get('/:name', function (req, res) {
-  return res.json(db.items.find(req.params.name));
+  return res.json(db.items.find(function (item) {
+    return item.name === req.params.name;
+  }))
+});
+
+router.patch('/:name', function(req, res){
+  const updatedItem = db.items.find(function(item){
+    if(item.name === req.params.name){
+      item.price === req.body.price;
+      item.name === req.body.name;
+      return item;
+    }else{
+      throw new NotFoundError;
+    }
+  })
+  return res.json({update: updatedItem})
 })
 
-/** accepts JSON body */
+module.exports = router;
